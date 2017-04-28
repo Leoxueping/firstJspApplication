@@ -14,6 +14,7 @@
     request.setCharacterEncoding("utf-8");
     String deleteId = request.getParameter("id");
     String updateId = request.getParameter("updateId");
+    boolean isRegister = request.getParameter("register") != null;
     Message message = new Message();
     StudentDao iEmpDAOInstance = DAOFactory.getIEmpDAOInstance();
     if (deleteId != null) {
@@ -27,6 +28,16 @@
         stu.setStudentSex(request.getParameter("student_sex"));
         message = iEmpDAOInstance.updateStudent(stu);
     }
+
+    if(isRegister) {
+        Student student = new Student();
+        student.setStudentName(request.getParameter("student_name"));
+        student.setStudentMajor(request.getParameter("student_major"));
+        student.setStudentId(request.getParameter("student_id"));
+        student.setStudentSex(request.getParameter("student_sex"));
+        message = iEmpDAOInstance.addStudent(student);
+    }
+
 %>
 <html>
 <head>

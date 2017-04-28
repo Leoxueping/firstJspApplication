@@ -4,6 +4,7 @@ package Service;
  * Created by leon on 17/4/17.
  */
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 
 import dao.StudentDao;
@@ -22,7 +23,7 @@ public class StudentService implements StudentDao {
             Connection conn = DBConnection.getConnection();
             StudentDaoImpl daoImpl = new StudentDaoImpl(conn);
             if(daoImpl.findStudentById(student.getStudentId()) != null) {
-                res.setMessage("您已注册，请登录");
+                res.setMessage("您的学号已存在，请勿重复注册!");
                 res.setCode(false);
             }else {
                 res = daoImpl.addStudent(student);
@@ -46,6 +47,9 @@ public class StudentService implements StudentDao {
             StudentDaoImpl daoImpl = new StudentDaoImpl(conn);
             if (daoImpl.findStudentById(student_id) != null) {
                 res = daoImpl.deleteStudentById(student_id);
+            }else {
+                res.setCode(false);
+                res.setMessage("您的学号不存在，请勿重复删除!");
             }
             conn.close();
         } catch (Exception e) {
@@ -71,12 +75,12 @@ public class StudentService implements StudentDao {
     }
 
     @Override
-    public List<Student> findAllByPage(int page) throws Exception {
+    public List<Student> findAllByPage(int page, int pageSize) throws Exception {
         List<Student> all = null;
         try {
             Connection conn = DBConnection.getConnection();
             StudentDaoImpl daoImpl = new StudentDaoImpl(conn);
-            all = daoImpl.findAllByPage(page);
+            all = daoImpl.findAllByPage(page, pageSize);
             conn.close();
         } catch (Exception e) {
             throw e;
@@ -115,6 +119,21 @@ public class StudentService implements StudentDao {
         }finally {
         }
         return res;
+    }
+
+    @Override
+    public List<Student> blurSearchStudent(String condition, String type) throws Exception {
+        List<Student> all = null;
+        try {
+            Connection conn = DBConnection.getConnection();
+            StudentDaoImpl daoImpl = new StudentDaoImpl(conn);
+            all = daoImpl.blurSearchStudent(condition, type);
+            conn.close();
+        } catch (Exception e) {
+            throw e;
+        } finally {
+        }
+        return all;
     }
 
 }

@@ -21,7 +21,7 @@ public class StudentService implements StudentDao {
     }
 
     @Override
-    public List<Student> findAllByPage(int page) throws Exception {
+    public List<Student> findAllByPage(int page, int pageSize) throws Exception {
         return null;
     }
 
@@ -37,6 +37,11 @@ public class StudentService implements StudentDao {
 
     @Override
     public Message updateStudent(Student student) throws Exception {
+        return null;
+    }
+
+    @Override
+    public List<Student> blurSearchStudent(String condition, String type) throws Exception {
         return null;
     }
 

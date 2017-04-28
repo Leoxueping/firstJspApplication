@@ -103,15 +103,18 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
-    public List<Student> findAllByPage (int page) throws Exception {
+    public List<Student> findAllByPage (int page, int pageSize) throws Exception {
         List<Student> list = new ArrayList<>();
-        int begin = 10 * (page - 1);
-        int end = 10 * (page - 1) + 10;
+        int begin = pageSize * (page - 1);
+//        if (page != 1) {
+//            begin ++;
+//        }
+//        int end = pageSize * page;
         String sql = "select student_id,student_name,student_major,student_sex from Student LIMIT ?,?";
         try {
             this.pstmt = this.conn.prepareStatement(sql);
             this.pstmt.setInt(1, begin);
-            this.pstmt.setInt(2, end);
+            this.pstmt.setInt(2, pageSize);
             ResultSet rs= this.pstmt.executeQuery();
             while(rs.next()){
                 Student student = new Student();
@@ -184,6 +187,47 @@ public class StudentDaoImpl implements StudentDao {
         }
         return res;
 
+    }
+
+    @Override
+    public List<Student> blurSearchStudent(String condition, String type) throws Exception {
+        List<Student> list = new ArrayList<>();
+        String sql = null;
+        switch (type){
+            case "student_name":
+                sql = "select student_id,student_name,student_major,student_sex FROM Student WHERE Student.student_name LIKE ?";
+                break;
+            case "student_id":
+                sql = "select student_id,student_name,student_major,student_sex FROM Student WHERE Student.student_id LIKE ?";
+                break;
+            case "student_major":
+                sql = "select student_id,student_name,student_major,student_sex FROM Student WHERE Student.student_major LIKE ?";
+                break;
+            case "student_sex":
+                sql = "select student_id,student_name,student_major,student_sex FROM Student WHERE Student.student_sex LIKE ?";
+                break;
+        }
+        try {
+            this.pstmt = this.conn.prepareStatement(sql);
+            this.pstmt.setString(1, "%" + condition + "%");
+            ResultSet rs= this.pstmt.executeQuery();
+            while(rs.next()){
+                Student student = new Student();
+                student.setStudentId(rs.getString(1));
+                student.setStudentName(rs.getString(2));
+                student.setStudentMajor(rs.getString(3));
+                student.setStudentSex(rs.getString(4));
+                list.add(student);
+            }
+            this.pstmt.close();
+            rs.close();
+        }catch (Exception e) {
+            throw e;
+        }finally {
+            this.pstmt = null;
+        }
+
+        return list;
     }
 
 }

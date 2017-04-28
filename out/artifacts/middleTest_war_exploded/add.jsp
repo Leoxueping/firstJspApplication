@@ -34,7 +34,7 @@
 </head>
 <body>
     <div class="container">
-        <form action="show.jsp" method="post" onsubmit="return submitForm()">
+        <form action="result.jsp" method="post" onsubmit="return submitForm()">
             <div class="field">
                 <p class="control has-icons-left">
                     <input class="input" name="student_name" type="text" placeholder="姓名">

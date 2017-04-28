@@ -18,35 +18,17 @@
     request.setCharacterEncoding("utf-8");
     response.setCharacterEncoding("utf-8");
     response.setContentType("text/html;charset=UTF-8");
-    boolean isRegister = request.getParameter("register") != null;
-    String deleteId = request.getParameter("id");
+//    int currentPage = session.getAttribute("currentPage") != null ? Integer.parseInt(session.getAttribute("currentPage").toString()) : 1;
+//    boolean isRegister = request.getParameter("register") != null;
+//    String deleteId = request.getParameter("id");
     StudentDao test = DAOFactory.getIEmpDAOInstance();
-    Message res = null;
-    if (isRegister) {
-
-
-        Student student = new Student();
-        student.setStudentName(request.getParameter("student_name"));
-        student.setStudentMajor(request.getParameter("student_major"));
-        student.setStudentId(request.getParameter("student_id"));
-        student.setStudentSex(request.getParameter("student_sex"));
-        res = test.addStudent(student);
-
-    }
-    if (deleteId != null) {
-        res = test.deleteStudentById(deleteId);
-    }
-
-    if (!isRegister && deleteId == null) {
-        res =  new Message();
-        res.setCode(true);
-        res.setMessage("成功");
-    }
-
-    List<Student> all = test.findAllByPage(1);
+//    Message res = null;
+//    int currentPage = 1;
+    int pageSize = 8;
+//    List<Student> all = test.findAllByPage(currentPage, pageSize);
     int allLength = test.findAll().size();
-    pageContext.setAttribute("res", res);
-    pageContext.setAttribute("all", all);
+//    pageContext.setAttribute("res", res);
+//    pageContext.setAttribute("all", all);
 
 %>
 <html>
@@ -55,72 +37,80 @@
     <link rel="stylesheet" type="text/css" href="./css/bulma.css">
 </head>
 <body>
-    <c:choose>
-        <c:when test="${res.getCode()}">
-            <div class="container">
-                <h2 style="margin: 20px auto; text-align: center;">所有信息</h2>
 
-                <div class="field has-addons">
-                    <p class="control">
-                        <input class="input" type="text" placeholder="搜索">
-                    </p>
-                    <p class="control">
-                        <a class="button is-info">
-                            搜索
-                        </a>
-                    </p>
-                </div>
-                <table class="table is-striped">
-                    <thead>
-                    <tr>
-                        <th>姓名</th>
-                        <th>性别</th>
-                        <th>学号</th>
-                        <th>专业</th>
-                        <th>操作</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <c:forEach var="stu" items="${all}" varStatus="stus">
-                            <tr>
-                                <td>
-                                    <c:out value="${stu.getStudentName()}"></c:out>
-                                </td>
-                                <td>
-                                    <c:out value="${stu.getStudentSex()}"></c:out>
-                                </td>
-                                <td>
-                                    <c:out value="${stu.getStudentId()}"></c:out>
-                                </td>
-                                <td>
-                                    <c:out value="${stu.getStudentMajor()}"></c:out>
-                                </td>
-                                <td>
-                                    <a class="button is-primary is-outlined" href="update.jsp?id=${stu.getStudentId()}">修改</a>
-                                    <a class="button is-danger is-outlined" onclick="showModel(${stu.getStudentId()})">删除</a>
-                                </td>
-                            </tr>
-                        </c:forEach>
-                    </tbody>
-                </table>
-                <nav class="pagination is-centered" style="margin: 20px auto;">
-                    <a class="pagination-previous" id="firstPage" onclick="toFirstPage(this)">首页</a>
-                    <a class="pagination-next" id="lastPage" onclick="toLastPage(this)">尾页</a>
-                    <ul class="pagination-list">
-                        <li><a class="pagination-link" id="prevPage" onclick="toPrevPage()">前一页</a></li>
-                        <li><a class="pagination-link" id="nextPage" onclick="toNextPage()">下一页</a></li>
-                    </ul>
-                </nav>
+    <div class="container">
+        <h2 style="margin: 20px auto; text-align: center;">所有信息</h2>
+
+        <div class="field has-addons">
+            <p class="control">
+                <input class="input" id="searchCondition" type="text" placeholder="搜索">
+            </p>
+            <p class="control">
+                <span class="select">
+                    <select id="searchType">
+                        <option value="student_name">姓名</option>
+                        <option value="student_id">学号</option>
+                        <option value="student_major">专业</option>
+                    </select>
+                </span>
+            </p>
+            <p class="control">
+                <a class="button is-info" onclick="searchInfo()">
+                    搜索
+                </a>
+            </p>
+            <div style="position: absolute; right: 0;">
+                <a href="./add.jsp" class="button is-primary is-link is-inverted subtitle">去添加</a>
             </div>
-        </c:when>
-        <c:otherwise>
-            ${res.getMessage()}
-        </c:otherwise>
-    </c:choose>
+        </div>
+
+        <table class="table is-striped">
+            <thead>
+            <tr>
+                <th>姓名</th>
+                <th>性别</th>
+                <th>学号</th>
+                <th>专业</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
+                <c:forEach var="stu" items="${all}" varStatus="stus">
+                    <tr>
+                        <td>
+                            <c:out value="${stu.getStudentName()}"></c:out>
+                        </td>
+                        <td>
+                            <c:out value="${stu.getStudentSex()}"></c:out>
+                        </td>
+                        <td>
+                            <c:out value="${stu.getStudentId()}"></c:out>
+                        </td>
+                        <td>
+                            <c:out value="${stu.getStudentMajor()}"></c:out>
+                        </td>
+                        <td>
+                            <a class="button is-primary is-outlined" href="update.jsp?id=${stu.getStudentId()}">修改</a>
+                            <a class="button is-danger is-outlined" onclick="showModel(${stu.getStudentId()})">删除</a>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+        <nav id="myPagination" class="pagination is-centered" style="margin: 20px auto;">
+            <a class="pagination-previous" id="firstPage" onclick="toFirstPage(this)">首页</a>
+            <a class="pagination-next" id="lastPage" onclick="toLastPage(this)">尾页</a>
+            <ul class="pagination-list">
+                <li><a class="pagination-link" id="prevPage" onclick="toPrevPage()">前一页</a></li>
+                <li><a class="pagination-link" id="nextPage" onclick="toNextPage()">下一页</a></li>
+            </ul>
+        </nav>
+        <button id="backToShowAll" style="display:none; color: #00d1b2; width: 100%;" class="button is-link subtitle" onclick="backToShowAll()">返回</button>
+    </div>
 
     <div id="model" class="modal">
         <div class="modal-background"></div>
-        <div class="card" style="padding: 20px;width:500px;border-radius: 3px;">
+        <div class="card" style="padding: 20px;width:400px;border-radius: 3px;">
             <div class="card-content">
                 确定删除吗？
             </div>
@@ -133,6 +123,10 @@
     </div>
 </body>
 <script type="text/javascript">
+
+    var domain = window.location.host.split(':')[0];
+    console.log(domain)
+
     var showModel = function (id) {
         document.getElementById('model').style.display = "flex";
         window.deleteId = id;
@@ -145,9 +139,10 @@
     }
 
 //    分页
-    var currentPage = 1;
+    var currentPage = sessionStorage.currentPage ? parseInt(sessionStorage.currentPage) : 1;
+
     var showPages = 5;//显示的页码数
-    var pageLength = <%=Math.ceil(allLength/10.0)%>;//总共页面数
+    var pageLength = <%=Math.ceil((float)allLength/pageSize)%>;//总共页面数
     var prevPage = document.getElementById('prevPage');
     var nextPage = document.getElementById('nextPage');
     var firstPage = document.getElementById('firstPage');
@@ -171,8 +166,11 @@
         nextPage.setAttribute('disabled', true);
         lastPage.setAttribute('disabled', true);
     }
-    prevPage.setAttribute('disabled', true);
-    firstPage.setAttribute('disabled', true);
+
+    if (currentPage == 1) {
+        prevPage.setAttribute('disabled', true);
+        firstPage.setAttribute('disabled', true);
+    }
 
     var traverseChangeClassName = function (currentPage, changeIndex) {
         var storeCurrentPage = currentPage;
@@ -194,6 +192,7 @@
         currentPage ++;
         prevPage.removeAttribute('disabled');
         firstPage.removeAttribute('disabled');
+        getStudent();
         if (currentPage == pageLength) {
             nextPage.setAttribute('disabled', true);
             lastPage.setAttribute('disabled', true);
@@ -236,6 +235,7 @@
         currentPage --;
         nextPage.removeAttribute('disabled');
         lastPage.removeAttribute('disabled');
+        getStudent();
         if (currentPage == 1) {
             prevPage.setAttribute('disabled', true);
             firstPage.setAttribute('disabled', true);
@@ -276,8 +276,9 @@
     }
 
     var goPage = function (evt) {
-        if (currentPage == evt.innerHTML) return;
-        currentPage = parseInt(evt.innerText);
+        var page = parseInt(evt.innerText);
+        if (currentPage == page) return;
+        currentPage = page;
         document.getElementsByClassName("is-current")[0].className = 'pagination-link';
         evt.className = 'pagination-link is-current';
         if (currentPage != 1) {
@@ -295,6 +296,8 @@
             nextPage.setAttribute("disabled", true);
             lastPage.setAttribute("disabled", true);
         }
+        getStudent();
+
 
     }
 
@@ -310,6 +313,7 @@
             nextPage.removeAttribute('disabled');
             lastPage.removeAttribute('disabled');
         }
+        getStudent();
     }
 
     var toLastPage = function (evt) {
@@ -324,6 +328,7 @@
             prevPage.removeAttribute('disabled');
             firstPage.removeAttribute('disabled');
         }
+        getStudent();
     }
 
 
@@ -386,11 +391,69 @@
         }
     }
 
-    ajax('POST', 'http://localhost:8080/getstudentinfo', 'page=都收', function (e) {
-        console.log(e);
-    }, function (e) {
-        console.log(e);
-    });
+    //获取数据
+    var getStudent = function () {
+        ajax('POST', 'http://' + domain + ':8080/getstudentinfo', 'page=' + currentPage + '&pageSize=' + <%=pageSize%>, function (res) {
+            res = eval(res);
+            var dom = '';
+            for (var i = 0; i < res.length; i ++) {
+                dom += '<tr>\
+                            <td>' + res[i].name + '</td>\
+                            <td>' + res[i].sex + '</td>\
+                            <td>' + res[i].id + '</td>\
+                            <td>' + res[i].major + '</td>\
+                            <td>\
+                                <a class="button is-primary is-outlined" href="update.jsp?id=' + res[i].id + '">修改</a>\
+                                <a class="button is-danger is-outlined" onclick="showModel(' + res[i].id + ')">删除</a>\
+                            </td>\
+                        </tr>'
+            }
+            document.getElementById('tbody').innerHTML = dom;
+
+        }, function (e) {
+            console.log(e);
+        });
+        sessionStorage.currentPage = currentPage;
+    }
+
+    //搜索功能
+    var searchInfo = function () {
+        var type = document.getElementById('searchType').value;
+        var condition = document.getElementById('searchCondition').value;
+        ajax('POST', 'http://' + domain + ':8080/searchStudent', 'condition=' + condition + '&type=' + type, function (res) {
+            res = eval(res);
+            var dom = '';
+            if(res.length) {
+                for (var i = 0; i < res.length; i ++) {
+                    dom += '<tr>\
+                            <td>' + res[i].name + '</td>\
+                            <td>' + res[i].sex + '</td>\
+                            <td>' + res[i].id + '</td>\
+                            <td>' + res[i].major + '</td>\
+                            <td>\
+                                <a class="button is-primary is-outlined" href="update.jsp?id=${stu.getStudentId()}">修改</a>\
+                                <a class="button is-danger is-outlined" onclick="showModel(${stu.getStudentId()})">删除</a>\
+                            </td>\
+                        </tr>'
+                }
+                document.getElementById('tbody').innerHTML = dom;
+            }else {
+                document.getElementById('tbody').innerHTML = '<tr><td colspan="5" style="text-align:center;">无查找结果</td><tr>';
+            }
+
+            document.getElementById('myPagination').style.display = 'none';
+            document.getElementById('backToShowAll').style.display = 'block';
+
+        });
+    }
+
+    var backToShowAll = function () {
+        document.getElementById('myPagination').style.display = 'flex';
+        document.getElementById('backToShowAll').style.display = 'none';
+        getStudent();
+    }
+
+    getStudent();
 
 </script>
 </html>

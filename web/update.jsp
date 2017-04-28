@@ -71,7 +71,7 @@
                     <button class="button is-success" type="submit">
                         确认修改
                     </button>
-                    <button type="reset" class="button is-link">取消</button>
+                    <button type="reset" class="button is-link">恢复</button>
                 </p>
             </div>
             <input hidden name="updateId" value="<%=updateId%>">

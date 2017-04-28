@@ -43,7 +43,7 @@
                 </div>
             </div>
             <a class="button is-primary" href="./add.jsp">点击添加学生信息</a>
-            <a class="button is-primary" href="./show.jsp">点击查看学生信息</a>
+            <a class="button is-success" href="./show.jsp">点击查看学生信息</a>
         </div>
     </div>
 </body>

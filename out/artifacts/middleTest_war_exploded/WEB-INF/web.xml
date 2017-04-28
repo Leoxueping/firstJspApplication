@@ -14,6 +14,16 @@
         <url-pattern>/getstudentinfo</url-pattern>
     </servlet-mapping>
 
+    <servlet>
+        <servlet-name>SearchStudent</servlet-name>
+        <servlet-class>servlet.SearchStudent</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>SearchStudent</servlet-name>
+        <url-pattern>/searchStudent</url-pattern>
+    </servlet-mapping>
+
 </web-app>
 
 
