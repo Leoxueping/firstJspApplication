@@ -76,7 +76,7 @@
             <div class="field">
                 <p class="control">
                     <button class="button is-success" type="submit">
-                        注册
+                        添加
                     </button>
                     <button type="reset" class="button is-link">重置</button>
                 </p>

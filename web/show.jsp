@@ -431,8 +431,8 @@
                             <td>' + res[i].id + '</td>\
                             <td>' + res[i].major + '</td>\
                             <td>\
-                                <a class="button is-primary is-outlined" href="update.jsp?id=${stu.getStudentId()}">修改</a>\
-                                <a class="button is-danger is-outlined" onclick="showModel(${stu.getStudentId()})">删除</a>\
+                                <a class="button is-primary is-outlined" href="update.jsp?id=' + res[i].id + '">修改</a>\
+                                <a class="button is-danger is-outlined" onclick="showModel(' + res[i].id + ')">删除</a>\
                             </td>\
                         </tr>'
                 }

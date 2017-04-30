@@ -38,7 +38,7 @@
 <body>
     <div class="container">
         <h1 class="title">修改信息</h1>
-        <form action="result.jsp" method="post">
+        <form action="result.jsp" method="post" onsubmit="return submitForm();">
             <div class="field">
                 <p class="control has-icons-left">
                     <input class="input" value="${stu.getStudentName()}" name="student_name" type="text" placeholder="姓名">
@@ -78,4 +78,22 @@
         </form>
     </div>
 </body>
+<script type="text/javascript">
+    var submitForm = function() {
+        var inputs = document.getElementsByTagName('input');
+        var names = {
+            student_name: '姓名',
+            student_sex: '性别',
+            student_id: '学号',
+            student_major: '专业'
+        };
+        for (var i = 0; i < inputs.length; i ++) {
+            if(inputs[i].value == '') {
+                alert('请输入' + names[inputs[i].name]);
+                return false;
+            }
+        }
+        return true;
+    }
+</script>
 </html>
